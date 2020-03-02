@@ -111,8 +111,6 @@ public class RestApiController {
         newGame.put("turn", request.get("turn").toString());
         scores.add(newGame);
 
-        System.out.println(scores);
-
         return "Ok";
     }
 
