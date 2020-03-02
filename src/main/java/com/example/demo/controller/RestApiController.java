@@ -18,62 +18,68 @@ public class RestApiController {
     List<Integer> secondInd = new ArrayList<>();
     List<Map<String, String>> scores = new ArrayList<Map<String, String >>();
 
-    public RestApiController() {
+    public void initializeTheBoard () {
+        board = new ArrayList<String>(Collections.nCopies(25, ""));
+        treasureInd.clear();
+        closestInd.clear();
+        secondInd.clear();
         for (int i = 0; i < 3; i++) {
             Random r = new Random();
             int ind = r.nextInt((24 - 0)) + 0;
             if(!treasureInd.contains(ind)){
-                this.board.set(ind, "T");
-                this.treasureInd.add(ind);
+                board.set(ind, "T");
+                treasureInd.add(ind);
             } else {
                 i--;
             }
         }
-        Collections.sort(this.treasureInd);
-        this.treasureInd.forEach((ind) -> {
-            if (ind % 5 != 0 && this.board.get(ind - 1) == "") {
-                this.closestInd.add(ind - 1);
-                this.board.set(ind - 1, "3");
+        Collections.sort(treasureInd);
+        treasureInd.forEach((ind) -> {
+            if (ind % 5 != 0 && board.get(ind - 1) == "") {
+                closestInd.add(ind - 1);
+                board.set(ind - 1, "3");
             }
-            if ((ind + 1) % 5 != 0 && this.board.get(ind + 1) == "") {
+            if ((ind + 1) % 5 != 0 && board.get(ind + 1) == "") {
                 this.closestInd.add(ind + 1);
                 this.board.set(ind + 1, "3");
             }
-            if (ind + 5 < 25 && this.board.get(ind + 5) == "") {
-                this.closestInd.add(ind + 5);
-                this.board.set(ind+5, "3");
+            if (ind + 5 < 25 && board.get(ind + 5) == "") {
+                closestInd.add(ind + 5);
+                board.set(ind+5, "3");
             }
-            if (ind - 5 >= 0 && this.board.get(ind - 5) == "") {
-                this.closestInd.add(ind - 5);
-                this.board.set(ind-5, "3");
+            if (ind - 5 >= 0 && board.get(ind - 5) == "") {
+                closestInd.add(ind - 5);
+                board.set(ind-5, "3");
             }
         });
 
-        Collections.sort(this.closestInd);
+        Collections.sort(closestInd);
         this.closestInd.forEach((i) -> {
             if (i % 5 != 0 && board.get(i - 1) == "") {
                 this.secondInd.add(i - 1);
                 this.board.set(i - 1, "2");
             }
-            if ((i + 1) % 5 != 0 && this.board.get(i + 1) == "") {
-                this.secondInd.add(i + 1);
-                this.board.set(i + 1, "2");
+            if ((i + 1) % 5 != 0 && board.get(i + 1) == "") {
+                secondInd.add(i + 1);
+                board.set(i + 1, "2");
             }
-            if (i + 5 < 25 && this.board.get(i + 5) == "") {
-                this.secondInd.add(i + 5);
-                this.board.set(i+5, "2");
+            if (i + 5 < 25 && board.get(i + 5) == "") {
+                secondInd.add(i + 5);
+                board.set(i+5, "2");
             }
-            if (i - 5 >= 0 && this.board.get(i - 5) == "") {
-                this.secondInd.add(i - 5);
-                this.board.set(i - 5, "2");
+            if (i - 5 >= 0 && board.get(i - 5) == "") {
+                secondInd.add(i - 5);
+                board.set(i - 5, "2");
             }
         });
-        Collections.sort(this.secondInd);
+        Collections.sort(secondInd);
     }
 
     @CrossOrigin
     @RequestMapping(value="/api/startGame", method= RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity startGame(@RequestBody Map<String, String> request) {
+        initializeTheBoard();
+
         String playerName = request.get("playerName");
         if(playerName == null || playerName == "") {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
